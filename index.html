@@ -219,12 +219,25 @@
 		function closeModal() { document.getElementById('attendance-modal').classList.add('hidden'); }
 
 		async function loadEmpOptions() {
-			const sel = document.getElementById('emp-select');
-			if(sel.options.length > 0) return;
-			const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getEmployees' }) });
-			const emps = await res.json();
-			emps.forEach(e => sel.innerHTML += `<option value="${e}">${e}</option>`);
-		}
+    const sel = document.getElementById('emp-select');
+    sel.innerHTML = '<option>Loading Employees...</option>'; // رسالة مؤقتة
+    try {
+        const res = await fetch(API_URL, { 
+            method: 'POST', 
+            body: JSON.stringify({ action: 'getEmployees' }) 
+        });
+        const emps = await res.json();
+        sel.innerHTML = ''; // مسح الرسالة المؤقتة
+        emps.forEach(e => {
+            let opt = document.createElement('option');
+            opt.value = e;
+            opt.innerText = e;
+            sel.appendChild(opt);
+        });
+    } catch(e) {
+        sel.innerHTML = '<option>Error loading names</option>';
+    }
+}
 
 		async function submitAttendanceData() {
 			const emp = document.getElementById('emp-select').value;
