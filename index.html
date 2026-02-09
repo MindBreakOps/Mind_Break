@@ -57,7 +57,7 @@
 				<div class="glass p-8 shadow-xl">
 					<h2 class="text-xl font-black mb-8 text-[#632323] flex items-center gap-2"><i data-lucide="plus-circle"></i> Service</h2>
 					<div class="space-y-5">
-						<input type="number" id="invNum" placeholder="Invoice Number" class="w-full p-5 rounded-3xl bg-white outline-none font-bold shadow-inner">
+						<input type="text" id="invNum" placeholder="Plate No" class="w-full p-5 rounded-3xl bg-white outline-none font-bold shadow-inner">
 						<input type="number" id="invAmount" oninput="logicValet()" placeholder="Amount (SAR)" class="w-full p-5 rounded-3xl bg-white outline-none font-black text-xl text-[#632323] shadow-inner">
 						<div id="payment-area" class="hidden bg-[#632323] text-white p-6 rounded-[2.5rem] shadow-xl"><p class="text-2xl font-black">25.00 SAR Fee Required</p></div>
 						<div id="free-badge" class="hidden p-5 rounded-[2.5rem] bg-green-500/10 border border-green-500/20 text-center text-green-700 font-black uppercase">Free Service</div>
@@ -219,24 +219,24 @@
 		function closeModal() { document.getElementById('attendance-modal').classList.add('hidden'); }
 
 		async function loadEmpOptions() {
-    const sel = document.getElementById('emp-select');
-    sel.innerHTML = '<option>Loading Employees...</option>'; // رسالة مؤقتة
-    try {
-        const res = await fetch(API_URL, { 
-            method: 'POST', 
-            body: JSON.stringify({ action: 'getEmployees' }) 
-        });
-        const emps = await res.json();
-        sel.innerHTML = ''; // مسح الرسالة المؤقتة
-        emps.forEach(e => {
-            let opt = document.createElement('option');
-            opt.value = e;
-            opt.innerText = e;
-            sel.appendChild(opt);
-        });
-    } catch(e) {
-        sel.innerHTML = '<option>Error loading names</option>';
-    }
+	const sel = document.getElementById('emp-select');
+	sel.innerHTML = '<option>Loading Employees...</option>'; // رسالة مؤقتة
+	try {
+		const res = await fetch(API_URL, { 
+			method: 'POST', 
+			body: JSON.stringify({ action: 'getEmployees' }) 
+		});
+		const emps = await res.json();
+		sel.innerHTML = ''; // مسح الرسالة المؤقتة
+		emps.forEach(e => {
+			let opt = document.createElement('option');
+			opt.value = e;
+			opt.innerText = e;
+			sel.appendChild(opt);
+		});
+	} catch(e) {
+		sel.innerHTML = '<option>Error loading names</option>';
+	}
 }
 
 		async function submitAttendanceData() {
