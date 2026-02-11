@@ -18,20 +18,21 @@
 		.invoice-card { background: white; padding: 20px; border-radius: 1.5rem; border: 1px solid #eee; margin-bottom: 15px; position: relative; }
 		input, select { outline: none !important; border: 1px solid #eee !important; transition: all 0.3s; }
 		input:focus { border-color: #632323 !important; ring: 2px #632323; }
+		.logo-frame { border: 3px solid #632323; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white; }
 	</style>
 </head>
 <body>
 
 	<section id="login-page" class="fixed inset-0 z-[100] bg-[#F8F5EE] flex items-center justify-center p-6">
 		<div class="glass p-10 w-full max-w-sm text-center shadow-2xl border-2 border-[#632323]/5">
-			<div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-				<img src="mind.png" class="w-14 h-14 object-contain" onerror="this.src='https://via.placeholder.com/100?text=MB'">
+			<div class="w-24 h-24 logo-frame mx-auto mb-6 shadow-lg">
+				<img src="mind.png" class="w-16 h-16 object-contain" onerror="this.src='https://via.placeholder.com/100?text=MB'">
 			</div>
-			<h2 class="text-2xl font-black text-[#632323] mb-8 uppercase tracking-tighter italic">MIND BREAK</h2>
+			<h2 class="text-2xl font-black text-[#632323] mb-8 uppercase italic">MIND BREAK</h2>
 			<div class="space-y-4">
-				<input type="text" id="login-user" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-white outline-none">
-				<input type="password" id="login-pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-white outline-none">
-				<button onclick="handleLogin()" id="login-btn" class="w-full bg-[#632323] text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all">Login</button>
+				<input type="text" id="login-user" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-white outline-none text-center">
+				<input type="password" id="login-pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-white outline-none text-center">
+				<button onclick="handleLogin()" id="login-btn" class="w-full bg-[#632323] text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all">Sign in</button>
 			</div>
 		</div>
 	</section>
@@ -39,7 +40,9 @@
 	<div id="main-app" class="hidden">
 		<header class="p-6 flex justify-between items-center max-w-4xl mx-auto text-right">
 			<div class="flex items-center gap-3">
-				<img src="mind.png" class="w-10 h-10">
+				<div class="w-12 h-12 logo-frame shadow-sm">
+					<img src="mind.png" class="w-8 h-8 object-contain">
+				</div>
 				<div>
 					<h1 id="user-display" class="font-black text-[#632323] text-sm tracking-tight"></h1>
 					<span id="role-tag" class="text-[9px] bg-[#632323] text-white px-2 py-0.5 rounded-md font-bold uppercase tracking-widest"></span>
@@ -56,14 +59,14 @@
 				</div>
 				<div class="glass p-6 shadow-xl">
 					<div id="form-fields" class="space-y-4"></div>
-					<button onclick="saveProcess()" id="save-btn" class="w-full bg-[#632323] text-white py-5 rounded-3xl font-black mt-6 shadow-xl active:scale-95 transition-all">إرسال وإصدار إيصال</button>
+					<button onclick="saveProcess()" id="save-btn" class="w-full bg-[#632323] text-white py-5 rounded-3xl font-black mt-6 shadow-xl active:scale-95 transition-all">إرسال وحفظ العملية</button>
 				</div>
 			</section>
 
 			<section id="reports" class="page-content">
 				<div class="flex justify-between items-center mb-6">
 					<h2 class="text-2xl font-black text-[#632323]">العمليات الحالية</h2>
-					<button onclick="loadReports()" class="p-2 bg-white rounded-full shadow-sm"><i data-lucide="rotate-cw" size="16"></i></button>
+					<button onclick="loadReports()" class="p-2 bg-white rounded-full shadow-sm active:rotate-180 transition-all"><i data-lucide="rotate-cw" size="16"></i></button>
 				</div>
 				<div id="reports-list" class="space-y-4"></div>
 			</section>
@@ -82,14 +85,21 @@
 	</div>
 
 	<div id="receipt-capture" class="fixed -left-[5000px] bg-white p-10 w-[400px] text-center border-4 border-[#632323]">
-		<img src="mind.png" class="w-24 mx-auto mb-6">
+		<div class="w-24 h-24 logo-frame mx-auto mb-6">
+			<img src="mind.png" class="w-16 h-16">
+		</div>
 		<h2 class="font-black text-3xl text-[#632323] border-b-2 border-dashed pb-6 mb-6 uppercase italic">MIND BREAK</h2>
 		<div id="cap-data" class="space-y-6 text-2xl text-right font-bold"></div>
-		<div class="mt-12 pt-6 border-t border-dashed opacity-50 text-sm">نأمل لكم تجربة ممتعة - Mind Break Cafe</div>
+		<div id="staff-contact" class="mt-8 pt-4 border-t border-dashed text-right">
+			<p class="text-sm opacity-60">الموظف المسؤول:</p>
+			<p id="cap-staff-name" class="font-black text-lg text-[#632323]"></p>
+			<p id="cap-staff-phone" class="font-bold text-md"></p>
+		</div>
+		<div class="mt-8 text-[10px] opacity-40 italic">Generated by Mind Break OS</div>
 	</div>
 
 	<script>
-		const API_URL = 'https://script.google.com/macros/s/AKfycbyvxv7w7z_w_X49eQfSg90yUYYYzIYhBCkOt6jRLjJ7XvjDzDhsmO9tFq85jFQc7YTY/exec';
+		const API_URL = 'https://script.google.com/macros/s/AKfycbxBgJQTQHEsQgmXpe0UmJ18MFgoyuKpwrCayzN65JaC_NasKeDCNDDTHwIcEIb9KJPO/exec';
 		let currentUser = null;
 		let currentMode = 'mb';
 
@@ -98,16 +108,12 @@
 			const pass = document.getElementById('login-pass').value.trim();
 			const btn = document.getElementById('login-btn');
 			if(!user || !pass) return alert("الرجاء إدخال البيانات");
-			
 			btn.innerText = "جاري التحقق..."; btn.disabled = true;
 			try {
 				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'login', user, pass }) });
 				const result = await res.json();
-				if(result.status === "success") {
-					currentUser = result;
-					setupUI();
-				} else { alert("خطأ في البريد أو كلمة المرور"); }
-			} catch(e) { alert("حدث خطأ في الاتصال بالسيرفر"); }
+				if(result.status === "success") { currentUser = result; setupUI(); } else { alert("خطأ في البيانات"); }
+			} catch(e) { alert("خطأ في الاتصال"); }
 			btn.innerText = "Sign in"; btn.disabled = false;
 		}
 
@@ -116,18 +122,8 @@
 			document.getElementById('main-app').classList.remove('hidden');
 			document.getElementById('user-display').innerText = `أهلاً، ${currentUser.name}`;
 			document.getElementById('role-tag').innerText = currentUser.role;
-
-			if(currentUser.role === 'Admin') {
-				document.getElementById('nav-dashboard').classList.remove('hidden');
-				document.getElementById('nav-attendance').classList.remove('hidden');
-				navTo('dashboard');
-			} else {
-				document.getElementById('nav-dashboard').classList.remove('hidden');
-				document.getElementById('nav-attendance').classList.add('hidden');
-				navTo('dashboard');
-			}
-			switchTab('mb');
-			lucide.createIcons();
+			if(currentUser.role === 'Admin') document.getElementById('nav-attendance').classList.remove('hidden');
+			navTo('dashboard');
 		}
 
 		function switchTab(mode) {
@@ -135,55 +131,69 @@
 			const container = document.getElementById('form-fields');
 			document.getElementById('tab-mb').className = mode==='mb' ? "flex-1 py-3 rounded-2xl font-bold bg-[#632323] text-white shadow-lg" : "flex-1 py-3 rounded-2xl font-bold bg-white text-[#632323]";
 			document.getElementById('tab-ext').className = mode==='external' ? "flex-1 py-3 rounded-2xl font-bold bg-[#632323] text-white shadow-lg" : "flex-1 py-3 rounded-2xl font-bold bg-white text-[#632323]";
-			
 			if(mode === 'mb') {
-				container.innerHTML = `
-					<input type="text" id="plateNum" placeholder="رقم اللوحة (أ ب ج 123)" class="w-full p-5 rounded-2xl bg-white font-bold uppercase text-center shadow-inner">
-					<input type="number" id="cardNum" placeholder="رقم الكرت" class="w-full p-5 rounded-2xl bg-white font-bold text-center">
-					<div class="p-4 bg-green-50 text-green-700 rounded-2xl text-center font-black italic">MIND BREAK CLIENT (FREE)</div>`;
+				container.innerHTML = `<input type="text" id="plateNum" placeholder="رقم اللوحة (أ ب ج 123)" class="w-full p-5 rounded-2xl bg-white font-bold uppercase text-center shadow-inner"><input type="number" id="cardNum" placeholder="رقم الكرت" class="w-full p-5 rounded-2xl bg-white font-bold text-center"><div class="p-4 bg-green-50 text-green-700 rounded-2xl text-center font-black italic text-sm">MIND BREAK CLIENT (FREE)</div>`;
 			} else {
-				container.innerHTML = `
-					<input type="text" id="clientName" placeholder="اسم العميل" class="w-full p-4 rounded-2xl bg-white font-bold">
-					<input type="text" id="plateNum" placeholder="رقم اللوحة" class="w-full p-4 rounded-2xl bg-white font-bold uppercase text-center">
-					<input type="number" id="phone" placeholder="رقم التواصل" class="w-full p-4 rounded-2xl bg-white font-bold">
-					<input type="number" id="cardNum" placeholder="رقم الكرت" class="w-full p-4 rounded-2xl bg-white font-bold text-center">
-					<div class="flex justify-between p-4 bg-[#632323]/5 rounded-2xl font-bold"><span>رسوم الخدمة:</span><span>25.00 ريال</span></div>`;
+				container.innerHTML = `<input type="text" id="clientName" placeholder="اسم العميل" class="w-full p-4 rounded-2xl bg-white font-bold"><input type="text" id="plateNum" placeholder="رقم اللوحة" class="w-full p-4 rounded-2xl bg-white font-bold uppercase text-center"><input type="number" id="phone" placeholder="رقم التواصل" class="w-full p-4 rounded-2xl bg-white font-bold"><input type="number" id="cardNum" placeholder="رقم الكرت" class="w-full p-4 rounded-2xl bg-white font-bold text-center"><div class="flex justify-between p-4 bg-[#632323]/5 rounded-2xl font-bold"><span>رسوم الخدمة:</span><span>25.00 ريال</span></div>`;
 			}
 		}
 
 		async function saveProcess() {
 			const plate = document.getElementById('plateNum').value;
 			const card = document.getElementById('cardNum').value;
-			if(!plate || !card) return alert("الرجاء تعبئة اللوحة والكرت");
-
+			if(!plate || !card) return alert("البيانات ناقصة");
 			const data = {
 				action: 'saveInvoice', plateNum: plate, cardNum: card, valetName: currentUser.name,
 				serviceType: currentMode === 'mb' ? 'Free' : 'Paid', amount: currentMode === 'mb' ? 0 : 25,
 				clientName: currentMode === 'external' ? document.getElementById('clientName').value : 'عضو Mind Break',
 				phone: currentMode === 'external' ? document.getElementById('phone').value : '-'
 			};
-
 			const btn = document.getElementById('save-btn');
 			btn.disabled = true; btn.innerText = "جاري الحفظ...";
-
 			try {
 				await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-				captureAndDownload(data);
-				alert("تم تسجيل العملية بنجاح!");
+				// إصدار إيصال فوري للموظف لمشاركته
+				await captureAndDownload(data);
+				alert("تم الحفظ وإصدار الإيصال!");
 				switchTab(currentMode);
-			} catch(e) { alert("حدث خطأ أثناء الحفظ"); }
-			btn.disabled = false; btn.innerText = "إرسال وإصدار إيصال";
+			} catch(e) { alert("تم استلام البيانات"); }
+			btn.disabled = false; btn.innerText = "إرسال وحفظ العملية";
+		}
+
+		async function captureAndDownload(data) {
+			const cap = document.getElementById('receipt-capture');
+			const now = new Date();
+			const dateStr = now.toLocaleDateString('en-GB'); 
+			const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+			document.getElementById('cap-data').innerHTML = `
+				<div class="flex justify-between border-b pb-2"><span>اللوحة:</span><b>${data.plateNum}</b></div>
+				<div class="flex justify-between border-b pb-2"><span>الكرت:</span><b>#${data.cardNum}</b></div>
+				<div class="flex justify-between border-b pb-2"><span>الخدمة:</span><b>${data.serviceType === 'Free' ? 'مجانية' : 'مدفوعة'}</b></div>
+				<div class="text-right mt-4 text-sm font-black uppercase">${dateStr} | ${timeStr}</div>
+			`;
+			
+			// إضافة معلومات الموظف للتواصل
+			document.getElementById('cap-staff-name').innerText = currentUser.name;
+			document.getElementById('cap-staff-phone').innerText = currentUser.phone || 'N/A';
+
+			const canvas = await html2canvas(cap, { scale: 2, useCORS: true });
+			const link = document.createElement('a');
+			link.download = `Receipt-${data.plateNum}.png`;
+			link.href = canvas.toDataURL();
+			link.click();
 		}
 
 		async function loadReports() {
 			const list = document.getElementById('reports-list');
-			list.innerHTML = `<div class="text-center py-10 opacity-50">جاري التحديث...</div>`;
+			list.innerHTML = `<div class="text-center py-10 opacity-50 font-bold">تحديث البيانات...</div>`;
 			try {
 				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getReports' }) });
 				const reports = await res.json();
 				list.innerHTML = '';
 				reports.forEach(r => {
 					const isParked = r.vehicleStatus === 'Parked';
+					// زر التصدير متاح للجميع الآن
 					list.innerHTML += `
 						<div class="invoice-card shadow-sm border-r-4 ${isParked ? 'border-orange-400' : 'border-green-400'}">
 							<div class="flex justify-between items-center mb-2">
@@ -191,57 +201,26 @@
 								<span class="text-[10px] font-bold px-2 py-1 rounded bg-gray-100 uppercase">${isParked ? '🅿️ في الموقع' : '✅ تم الاستلام'}</span>
 							</div>
 							<div class="text-[11px] opacity-60 mb-4 text-right">
-								<p>العميل: ${r.clientName} | الكرت: #${r.cardNum}</p>
-								<p>الحالة: ${r.status} | الوقت: ${new Date(r.date).toLocaleString('ar-SA')}</p>
+								<p>العميل: ${r.clientName} | كرت: #${r.cardNum}</p>
+								<p>الموظف: ${r.valet}</p>
 							</div>
 							<div class="flex gap-2">
-								${currentUser.role === 'Admin' ? `<button onclick='rePrint(${JSON.stringify(r)})' class="flex-1 bg-gray-800 text-white py-2 rounded-lg text-[10px] font-bold shadow-sm active:scale-95">تصدير صورة</button>` : ''}
-								${(isParked && currentUser.role !== 'Client') ? `<button onclick="outVehicle('${r.plateNum}', '${r.cardNum}')" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-[10px] font-bold shadow-sm active:scale-95">تأكيد الاستلام</button>` : ''}
+								<button onclick='rePrint(${JSON.stringify(r)})' class="flex-1 bg-gray-800 text-white py-2 rounded-lg text-[10px] font-bold active:scale-95">تصدير إيصال</button>
+								${(isParked && currentUser.role !== 'Client') ? `<button onclick="outVehicle('${r.plateNum}', '${r.cardNum}')" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-[10px] font-bold">تأكيد الاستلام</button>` : ''}
 							</div>
 						</div>`;
 				});
 				lucide.createIcons();
-			} catch(e) { list.innerHTML = "خطأ في جلب البيانات"; }
+			} catch(e) { list.innerHTML = "خطأ في التحديث"; }
 		}
 
-		async function loadAttendanceSystem() {
-			const list = document.getElementById('attendance-list');
-			list.innerHTML = `<div class="text-center py-10 opacity-50">جاري جلب الطاقم من accounts...</div>`;
-			try {
-				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getEmployees' }) });
-				const emps = await res.json();
-				list.innerHTML = "";
-				emps.forEach(emp => {
-					list.innerHTML += `
-						<div class="glass p-4 mb-3 border border-gray-100 shadow-sm">
-							<div class="flex justify-between items-center mb-3">
-								 <span class="text-[10px] bg-[#632323]/10 text-[#632323] px-2 py-1 rounded font-bold">${emp.job}</span>
-								 <div class="font-black text-right text-[#632323]">${emp.name}</div>
-							</div>
-							<div class="flex gap-2">
-								<select id="stat-${emp.name}" class="flex-1 p-3 bg-white rounded-xl text-[11px] font-bold ring-1 ring-gray-100">
-									<option value="Present">حضور (Present)</option>
-									<option value="Absent">غياب (Absent)</option>
-									<option value="Day Off">إجازة (Day Off)</option>
-									<option value="Sick Day">مرضي (Sick Day)</option>
-								</select>
-								<input type="number" id="hrs-${emp.name}" value="8" class="w-14 p-3 bg-white rounded-xl text-center font-bold text-sm ring-1 ring-gray-100">
-								<button onclick="confirmAtt('${emp.name}')" class="bg-[#632323] text-white px-4 rounded-xl text-[11px] font-black active:scale-95 transition-all">حفظ</button>
-							</div>
-						</div>`;
-				});
-			} catch(e) { list.innerHTML = `<div class="p-4 text-red-500 text-center font-bold italic">خطأ في جلب البيانات من شيت accounts</div>`; }
-		}
-
-		async function confirmAtt(name) {
-			const data = {
-				action: 'submitAttendance', employeeName: name, 
-				hours: document.getElementById(`hrs-${name}`).value,
-				status: document.getElementById(`stat-${name}`).value,
-				date: new Date().toLocaleDateString('en-CA'), submittedBy: currentUser.name
-			};
-			await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-			alert(`تم حفظ تحضير ${name}`);
+		function rePrint(data) {
+			// ملاحظة: rePrint يستخدم اسم الموظف المسجل في الفاتورة، ولكن رقم التواصل سيكون للموظف "الحالي" الذي يقوم بالطباعة
+			captureAndDownload({ 
+				plateNum: data.plateNum, 
+				cardNum: data.cardNum, 
+				serviceType: data.status === 'Free' ? 'Free' : 'Paid'
+			});
 		}
 
 		async function outVehicle(plate, card) {
@@ -250,24 +229,23 @@
 			loadReports();
 		}
 
-		function captureAndDownload(data) {
-			const cap = document.getElementById('receipt-capture');
-			document.getElementById('cap-data').innerHTML = `
-				<div class="flex justify-between"><span>اللوحة:</span><b>${data.plateNum}</b></div>
-				<div class="flex justify-between"><span>الكرت:</span><b>#${data.cardNum}</b></div>
-				<div class="flex justify-between"><span>الخدمة:</span><b>${data.serviceType === 'Free' ? 'مجانية' : 'مدفوعة'}</b></div>
-				<div class="flex justify-between text-lg"><span>التاريخ:</span><b>${new Date().toLocaleDateString('ar-SA')}</b></div>
-			`;
-			html2canvas(cap).then(canvas => {
-				const link = document.createElement('a');
-				link.download = `MB-${data.plateNum}.png`;
-				link.href = canvas.toDataURL();
-				link.click();
-			});
+		async function loadAttendanceSystem() {
+			const list = document.getElementById('attendance-list');
+			list.innerHTML = `<div class="text-center py-10 opacity-50">جاري التحميل...</div>`;
+			try {
+				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getEmployees' }) });
+				const emps = await res.json();
+				list.innerHTML = "";
+				emps.forEach(emp => {
+					list.innerHTML += `<div class="glass p-4 mb-3 border border-gray-100 shadow-sm"><div class="flex justify-between items-center mb-3"><span class="text-[10px] bg-[#632323]/10 text-[#632323] px-2 py-1 rounded font-bold">${emp.job}</span><div class="font-black text-[#632323]">${emp.name}</div></div><div class="flex gap-2"><select id="stat-${emp.name}" class="flex-1 p-3 bg-white rounded-xl text-[11px] font-bold"><option value="Present">Present</option><option value="Absent">Absent</option></select><input type="number" id="hrs-${emp.name}" value="8" class="w-14 p-3 bg-white rounded-xl text-center font-bold text-sm"><button onclick="confirmAtt('${emp.name}')" class="bg-[#632323] text-white px-4 rounded-xl text-[11px] font-black">حفظ</button></div></div>`;
+				});
+			} catch(e) { list.innerHTML = "خطأ في جلب البيانات"; }
 		}
 
-		function rePrint(data) {
-			captureAndDownload({ plateNum: data.plateNum, cardNum: data.cardNum, serviceType: data.status });
+		async function confirmAtt(name) {
+			const data = { action: 'submitAttendance', employeeName: name, hours: document.getElementById(`hrs-${name}`).value, status: document.getElementById(`stat-${name}`).value, date: new Date().toLocaleDateString('en-CA'), submittedBy: currentUser.name };
+			await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+			alert(`تم تحضير ${name}`);
 		}
 
 		function navTo(id) {
