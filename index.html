@@ -1,253 +1,282 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>Mind Break</title>
-
-	<link rel="apple-touch-icon" href="mind.png">
-	<link rel="icon" type="image/png" href="mind.png">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-	<meta name="apple-mobile-web-app-title" content="Mind Break">
-
+	<title>Mind Break | نظام الإدارة</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script src="https://unpkg.com/lucide@latest"></script>
+	<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-		body { font-family: 'Tajawal', sans-serif; background-color: #F8F5EE; color: #331111; margin: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-		.logo-frame { width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(99, 35, 35, 0.15); border: 3px solid rgba(255, 255, 255, 0.8); margin: 0 auto 20px; }
-		.glass { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 2.5rem; }
-		.page-content { display: none; min-height: 85vh; padding-bottom: 120px; }
-		.page-content.active { display: block; animation: smoothIn 0.3s ease-out; }
-		@keyframes smoothIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-		.nav-active { background: #632323 !important; color: white !important; transform: translateY(-8px); box-shadow: 0 12px 20px rgba(99, 35, 35, 0.25); }
-		.calendar-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border-radius: 1rem; font-weight: bold; cursor: pointer; }
-		.admin-only { display: none; }
+		body { font-family: 'Tajawal', sans-serif; background-color: #F8F5EE; color: #331111; overflow-x: hidden; }
+		.glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid white; border-radius: 2rem; }
+		.page-content { display: none; padding-bottom: 120px; }
+		.active { display: block; animation: slideUp 0.3s ease-out; }
+		@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+		.nav-active { background: #632323 !important; color: white !important; }
+		.invoice-card { background: white; padding: 20px; border-radius: 1.5rem; border: 1px solid #eee; margin-bottom: 15px; position: relative; }
+		input, select { outline: none !important; border: 1px solid #eee !important; transition: all 0.3s; }
+		input:focus { border-color: #632323 !important; ring: 2px #632323; }
 	</style>
 </head>
 <body>
 
 	<section id="login-page" class="fixed inset-0 z-[100] bg-[#F8F5EE] flex items-center justify-center p-6">
-		<div class="glass p-12 w-full max-w-sm text-center shadow-2xl">
-			<div class="logo-frame"><img src="mind.png" alt="Logo" class="w-14 h-14 object-contain"></div>
-			<h2 class="text-2xl font-black text-[#632323] mb-8 tracking-tighter uppercase">MIND BREAK</h2>
+		<div class="glass p-10 w-full max-w-sm text-center shadow-2xl border-2 border-[#632323]/5">
+			<div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+				<img src="mind.png" class="w-14 h-14 object-contain" onerror="this.src='https://via.placeholder.com/100?text=MB'">
+			</div>
+			<h2 class="text-2xl font-black text-[#632323] mb-8 uppercase tracking-tighter italic">MIND BREAK</h2>
 			<div class="space-y-4">
-				<input type="text" id="login-user" placeholder="Email Address" dir="ltr" class="w-full p-4 rounded-2xl bg-white/80 border-none outline-none focus:ring-2 ring-[#632323]">
-				<input type="password" id="login-pass" placeholder="Password" dir="ltr" class="w-full p-4 rounded-2xl bg-white/80 border-none outline-none focus:ring-2 ring-[#632323]">
-				<button onclick="handleLogin()" id="login-btn" class="w-full bg-[#632323] text-white py-4 rounded-2xl font-bold text-lg active:scale-95 transition-all shadow-lg mt-4">Login</button>
+				<input type="text" id="login-user" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-white outline-none">
+				<input type="password" id="login-pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-white outline-none">
+				<button onclick="handleLogin()" id="login-btn" class="w-full bg-[#632323] text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all">Sign in</button>
 			</div>
 		</div>
 	</section>
 
-	<div id="main-app" class="hidden opacity-0 transition-opacity duration-700">
-		<header class="p-8 flex justify-between items-center max-w-4xl mx-auto">
+	<div id="main-app" class="hidden">
+		<header class="p-6 flex justify-between items-center max-w-4xl mx-auto text-right">
 			<div class="flex items-center gap-3">
-				<div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md border border-white"><img src="mind.png" alt="Logo" class="w-8 h-8 object-contain"></div>
+				<img src="mind.png" class="w-10 h-10">
 				<div>
-					<h1 class="text-sm font-black text-[#632323] tracking-widest uppercase">MIND BREAK</h1>
-					<div id="role-badge" class="inline-block px-2 py-0.5 bg-[#632323] text-white text-[7px] rounded-md font-bold uppercase">STAFF</div>
+					<h1 id="user-display" class="font-black text-[#632323] text-sm tracking-tight"></h1>
+					<span id="role-tag" class="text-[9px] bg-[#632323] text-white px-2 py-0.5 rounded-md font-bold uppercase tracking-widest"></span>
 				</div>
 			</div>
-			<button onclick="location.reload()" class="w-12 h-12 bg-white text-red-600 rounded-2xl shadow-sm flex items-center justify-center"><i data-lucide="log-out" size="18"></i></button>
+			<button onclick="location.reload()" class="p-3 bg-white rounded-xl shadow-sm text-red-500 hover:bg-red-50 transition-colors"><i data-lucide="power"></i></button>
 		</header>
 
 		<main class="max-w-4xl mx-auto px-6">
-			<section id="dashboard" class="page-content active">
-				<div class="glass p-8 shadow-xl">
-					<h2 class="text-xl font-black mb-8 text-[#632323] flex items-center gap-2"><i data-lucide="plus-circle"></i> Service</h2>
-					<div class="space-y-5">
-						<input type="text" id="invNum" placeholder="Plate No" class="w-full p-5 rounded-3xl bg-white outline-none font-bold shadow-inner">
-						<input type="number" id="invAmount" oninput="logicValet()" placeholder="Amount (SAR)" class="w-full p-5 rounded-3xl bg-white outline-none font-black text-xl text-[#632323] shadow-inner">
-						<div id="payment-area" class="hidden bg-[#632323] text-white p-6 rounded-[2.5rem] shadow-xl"><p class="text-2xl font-black">25.00 SAR Fee Required</p></div>
-						<div id="free-badge" class="hidden p-5 rounded-[2.5rem] bg-green-500/10 border border-green-500/20 text-center text-green-700 font-black uppercase">Free Service</div>
-						<input type="number" id="cardNum" placeholder="Valet Card #" class="w-full p-5 rounded-3xl bg-white outline-none font-bold shadow-inner">
-						<button onclick="saveInvoice()" id="save-btn" class="w-full bg-[#632323] text-white py-6 rounded-[2.5rem] font-black shadow-2xl text-xl mt-4">SAVE</button>
-					</div>
+			<section id="dashboard" class="page-content">
+				<div class="flex gap-2 mb-6">
+					<button onclick="switchTab('mb')" id="tab-mb" class="flex-1 py-3 rounded-2xl font-bold bg-[#632323] text-white shadow-lg transition-all">Mind Break</button>
+					<button onclick="switchTab('external')" id="tab-ext" class="flex-1 py-3 rounded-2xl font-bold bg-white text-[#632323] transition-all">عميل خارجي</button>
+				</div>
+				<div class="glass p-6 shadow-xl">
+					<div id="form-fields" class="space-y-4"></div>
+					<button onclick="saveProcess()" id="save-btn" class="w-full bg-[#632323] text-white py-5 rounded-3xl font-black mt-6 shadow-xl active:scale-95 transition-all">إرسال وإصدار إيصال</button>
 				</div>
 			</section>
 
 			<section id="reports" class="page-content">
-				<h2 class="text-2xl font-black text-[#632323] mb-6">Reports</h2>
-				<div class="admin-only grid grid-cols-2 gap-4 mb-6">
-					<div class="glass p-5 text-center"><p class="text-[9px] opacity-40 font-bold uppercase mb-1">Revenue</p><p id="total-revenue" class="text-xl font-black text-green-700">0.00</p></div>
-					<div class="glass p-5 text-center"><p class="text-[9px] opacity-40 font-bold uppercase mb-1">Total</p><p id="total-services" class="text-xl font-black text-[#632323]">0</p></div>
+				<div class="flex justify-between items-center mb-6">
+					<h2 class="text-2xl font-black text-[#632323]">العمليات الحالية</h2>
+					<button onclick="loadReports()" class="p-2 bg-white rounded-full shadow-sm"><i data-lucide="rotate-cw" size="16"></i></button>
 				</div>
-				<div id="invoice-feed" class="space-y-4"></div>
+				<div id="reports-list" class="space-y-4"></div>
 			</section>
 
-			<section id="employees" class="page-content">
-				<h2 class="text-2xl font-black text-[#632323] mb-6">Attendance</h2>
-				<div class="glass p-6"><div id="calendar-grid" class="grid grid-cols-7 gap-3"></div></div>
+			<section id="attendance" class="page-content">
+				<h2 class="text-2xl font-black text-[#632323] mb-6 text-center">التحضير اليومي</h2>
+				<div id="attendance-list" class="space-y-3"></div>
 			</section>
 		</main>
 
-		<nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-sm glass p-3 flex justify-around shadow-2xl z-[90]">
-			<button onclick="navTo('dashboard')" id="nav-dashboard" class="nav-active p-5 rounded-[2rem]"><i data-lucide="plus"></i></button>
-			<button onclick="navTo('reports')" id="nav-reports" class="p-5 rounded-[2rem]"><i data-lucide="bar-chart-3"></i></button>
-			<button onclick="navTo('employees')" id="nav-employees" class="p-5 rounded-[2rem] hidden"><i data-lucide="calendar-check"></i></button>
+		<nav id="nav-bar" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass p-2 flex justify-around shadow-2xl z-[90]">
+			<button onclick="navTo('dashboard')" id="nav-dashboard" class="p-4 rounded-[1.5rem]"><i data-lucide="plus-square"></i></button>
+			<button onclick="navTo('reports')" id="nav-reports" class="p-4 rounded-[1.5rem]"><i data-lucide="clipboard-list"></i></button>
+			<button onclick="navTo('attendance')" id="nav-attendance" class="p-4 rounded-[1.5rem] hidden"><i data-lucide="users"></i></button>
 		</nav>
 	</div>
 
-	<div id="attendance-modal" class="hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center p-6">
-		<div class="glass w-full max-w-sm p-10 bg-white shadow-3xl">
-			<h3 id="modal-date-label" class="text-xl font-black mb-6 text-[#632323] text-center"></h3>
-			<div class="space-y-4">
-				<select id="emp-select" class="w-full p-5 rounded-2xl bg-[#F8F5EE] outline-none font-bold"></select>
-				<select id="att-status" class="w-full p-5 rounded-2xl bg-[#F8F5EE] outline-none font-bold">
-					<option value="Present">Present</option><option value="Absent">Absent</option><option value="Sick">Sick</option>
-				</select>
-				<div class="flex gap-3 pt-4">
-					<button onclick="closeModal()" class="flex-1 py-4 font-bold bg-gray-100 rounded-2xl">Cancel</button>
-					<button onclick="submitAttendanceData()" id="sub-att-btn" class="flex-[2] py-4 font-black bg-[#632323] text-white rounded-2xl">Confirm</button>
-				</div>
-			</div>
-		</div>
+	<div id="receipt-capture" class="fixed -left-[5000px] bg-white p-10 w-[400px] text-center border-4 border-[#632323]">
+		<img src="mind.png" class="w-24 mx-auto mb-6">
+		<h2 class="font-black text-3xl text-[#632323] border-b-2 border-dashed pb-6 mb-6 uppercase italic">MIND BREAK</h2>
+		<div id="cap-data" class="space-y-6 text-2xl text-right font-bold"></div>
+		<div class="mt-12 pt-6 border-t border-dashed opacity-50 text-sm">نأمل لكم تجربة ممتعة - Mind Break Cafe</div>
 	</div>
 
 	<script>
-		const API_URL = 'https://script.google.com/macros/s/AKfycbzuxiA1NOmNXROX2ofdmgk_FyQymSWMsQH0y1GO_mMpmLAIojWhWTrt-_uyQ2r2dpTq/exec';
+		const API_URL = 'https://script.google.com/macros/s/AKfycbyvxv7w7z_w_X49eQfSg90yUYYYzIYhBCkOt6jRLjJ7XvjDzDhsmO9tFq85jFQc7YTY/exec';
 		let currentUser = null;
-		let allReports = [];
-		let selectedDate = "";
-
-		// الدالة التي كانت مفقودة وطلبتها أنت:
-		function showApp() {
-			document.getElementById('login-page').classList.add('hidden');
-			document.getElementById('main-app').classList.remove('hidden');
-			setTimeout(() => document.getElementById('main-app').style.opacity = '1', 50);
-			document.getElementById('role-badge').innerText = currentUser.role;
-			
-			if(currentUser.role === "Admin") {
-				document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'grid');
-				document.getElementById('nav-employees').classList.remove('hidden');
-				document.getElementById('nav-employees').style.display = 'flex';
-			} else {
-				document.getElementById('nav-employees').classList.add('hidden');
-				document.getElementById('nav-employees').style.display = 'none';
-			}
-			lucide.createIcons();
-		}
+		let currentMode = 'mb';
 
 		async function handleLogin() {
 			const user = document.getElementById('login-user').value.trim();
 			const pass = document.getElementById('login-pass').value.trim();
 			const btn = document.getElementById('login-btn');
-			btn.innerText = "Checking..."; btn.disabled = true;
+			if(!user || !pass) return alert("الرجاء إدخال البيانات");
+			
+			btn.innerText = "جاري التحقق..."; btn.disabled = true;
 			try {
 				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'login', user, pass }) });
 				const result = await res.json();
-				if(result.status === "success") { currentUser = result; showApp(); }
-				else { alert("Fail"); }
-			} catch(e) { alert("Error"); }
-			btn.innerText = "Login"; btn.disabled = false;
+				if(result.status === "success") {
+					currentUser = result;
+					setupUI();
+				} else { alert("خطأ في البريد أو كلمة المرور"); }
+			} catch(e) { alert("حدث خطأ في الاتصال بالسيرفر"); }
+			btn.innerText = "Sign in"; btn.disabled = false;
+		}
+
+		function setupUI() {
+			document.getElementById('login-page').classList.add('hidden');
+			document.getElementById('main-app').classList.remove('hidden');
+			document.getElementById('user-display').innerText = `أهلاً، ${currentUser.name}`;
+			document.getElementById('role-tag').innerText = currentUser.role;
+
+			if(currentUser.role === 'Admin') {
+				document.getElementById('nav-dashboard').classList.remove('hidden');
+				document.getElementById('nav-attendance').classList.remove('hidden');
+				navTo('dashboard');
+			} else {
+				document.getElementById('nav-dashboard').classList.remove('hidden');
+				document.getElementById('nav-attendance').classList.add('hidden');
+				navTo('dashboard');
+			}
+			switchTab('mb');
+			lucide.createIcons();
+		}
+
+		function switchTab(mode) {
+			currentMode = mode;
+			const container = document.getElementById('form-fields');
+			document.getElementById('tab-mb').className = mode==='mb' ? "flex-1 py-3 rounded-2xl font-bold bg-[#632323] text-white shadow-lg" : "flex-1 py-3 rounded-2xl font-bold bg-white text-[#632323]";
+			document.getElementById('tab-ext').className = mode==='external' ? "flex-1 py-3 rounded-2xl font-bold bg-[#632323] text-white shadow-lg" : "flex-1 py-3 rounded-2xl font-bold bg-white text-[#632323]";
+			
+			if(mode === 'mb') {
+				container.innerHTML = `
+					<input type="text" id="plateNum" placeholder="رقم اللوحة (أ ب ج 123)" class="w-full p-5 rounded-2xl bg-white font-bold uppercase text-center shadow-inner">
+					<input type="number" id="cardNum" placeholder="رقم الكرت" class="w-full p-5 rounded-2xl bg-white font-bold text-center">
+					<div class="p-4 bg-green-50 text-green-700 rounded-2xl text-center font-black italic">MIND BREAK CLIENT (FREE)</div>`;
+			} else {
+				container.innerHTML = `
+					<input type="text" id="clientName" placeholder="اسم العميل" class="w-full p-4 rounded-2xl bg-white font-bold">
+					<input type="text" id="plateNum" placeholder="رقم اللوحة" class="w-full p-4 rounded-2xl bg-white font-bold uppercase text-center">
+					<input type="number" id="phone" placeholder="رقم التواصل" class="w-full p-4 rounded-2xl bg-white font-bold">
+					<input type="number" id="cardNum" placeholder="رقم الكرت" class="w-full p-4 rounded-2xl bg-white font-bold text-center">
+					<div class="flex justify-between p-4 bg-[#632323]/5 rounded-2xl font-bold"><span>رسوم الخدمة:</span><span>25.00 ريال</span></div>`;
+			}
+		}
+
+		async function saveProcess() {
+			const plate = document.getElementById('plateNum').value;
+			const card = document.getElementById('cardNum').value;
+			if(!plate || !card) return alert("الرجاء تعبئة اللوحة والكرت");
+
+			const data = {
+				action: 'saveInvoice', plateNum: plate, cardNum: card, valetName: currentUser.name,
+				serviceType: currentMode === 'mb' ? 'Free' : 'Paid', amount: currentMode === 'mb' ? 0 : 25,
+				clientName: currentMode === 'external' ? document.getElementById('clientName').value : 'عضو Mind Break',
+				phone: currentMode === 'external' ? document.getElementById('phone').value : '-'
+			};
+
+			const btn = document.getElementById('save-btn');
+			btn.disabled = true; btn.innerText = "جاري الحفظ...";
+
+			try {
+				await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+				captureAndDownload(data);
+				alert("تم تسجيل العملية بنجاح!");
+				switchTab(currentMode);
+			} catch(e) { alert("حدث خطأ أثناء الحفظ"); }
+			btn.disabled = false; btn.innerText = "إرسال وإصدار إيصال";
+		}
+
+		async function loadReports() {
+			const list = document.getElementById('reports-list');
+			list.innerHTML = `<div class="text-center py-10 opacity-50">جاري التحديث...</div>`;
+			try {
+				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getReports' }) });
+				const reports = await res.json();
+				list.innerHTML = '';
+				reports.forEach(r => {
+					const isParked = r.vehicleStatus === 'Parked';
+					list.innerHTML += `
+						<div class="invoice-card shadow-sm border-r-4 ${isParked ? 'border-orange-400' : 'border-green-400'}">
+							<div class="flex justify-between items-center mb-2">
+								<span class="text-xl font-black text-[#632323]">${r.plateNum}</span>
+								<span class="text-[10px] font-bold px-2 py-1 rounded bg-gray-100 uppercase">${isParked ? '🅿️ في الموقع' : '✅ تم الاستلام'}</span>
+							</div>
+							<div class="text-[11px] opacity-60 mb-4 text-right">
+								<p>العميل: ${r.clientName} | الكرت: #${r.cardNum}</p>
+								<p>الحالة: ${r.status} | الوقت: ${new Date(r.date).toLocaleString('ar-SA')}</p>
+							</div>
+							<div class="flex gap-2">
+								${currentUser.role === 'Admin' ? `<button onclick='rePrint(${JSON.stringify(r)})' class="flex-1 bg-gray-800 text-white py-2 rounded-lg text-[10px] font-bold shadow-sm active:scale-95">تصدير صورة</button>` : ''}
+								${(isParked && currentUser.role !== 'Client') ? `<button onclick="outVehicle('${r.plateNum}', '${r.cardNum}')" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-[10px] font-bold shadow-sm active:scale-95">تأكيد الاستلام</button>` : ''}
+							</div>
+						</div>`;
+				});
+				lucide.createIcons();
+			} catch(e) { list.innerHTML = "خطأ في جلب البيانات"; }
+		}
+
+		async function loadAttendanceSystem() {
+			const list = document.getElementById('attendance-list');
+			list.innerHTML = `<div class="text-center py-10 opacity-50">جاري جلب الطاقم من accounts...</div>`;
+			try {
+				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getEmployees' }) });
+				const emps = await res.json();
+				list.innerHTML = "";
+				emps.forEach(emp => {
+					list.innerHTML += `
+						<div class="glass p-4 mb-3 border border-gray-100 shadow-sm">
+							<div class="flex justify-between items-center mb-3">
+								 <span class="text-[10px] bg-[#632323]/10 text-[#632323] px-2 py-1 rounded font-bold">${emp.job}</span>
+								 <div class="font-black text-right text-[#632323]">${emp.name}</div>
+							</div>
+							<div class="flex gap-2">
+								<select id="stat-${emp.name}" class="flex-1 p-3 bg-white rounded-xl text-[11px] font-bold ring-1 ring-gray-100">
+									<option value="Present">حضور (Present)</option>
+									<option value="Absent">غياب (Absent)</option>
+									<option value="Day Off">إجازة (Day Off)</option>
+									<option value="Sick Day">مرضي (Sick Day)</option>
+								</select>
+								<input type="number" id="hrs-${emp.name}" value="8" class="w-14 p-3 bg-white rounded-xl text-center font-bold text-sm ring-1 ring-gray-100">
+								<button onclick="confirmAtt('${emp.name}')" class="bg-[#632323] text-white px-4 rounded-xl text-[11px] font-black active:scale-95 transition-all">حفظ</button>
+							</div>
+						</div>`;
+				});
+			} catch(e) { list.innerHTML = `<div class="p-4 text-red-500 text-center font-bold italic">خطأ في جلب البيانات من شيت accounts</div>`; }
+		}
+
+		async function confirmAtt(name) {
+			const data = {
+				action: 'submitAttendance', employeeName: name, 
+				hours: document.getElementById(`hrs-${name}`).value,
+				status: document.getElementById(`stat-${name}`).value,
+				date: new Date().toLocaleDateString('en-CA'), submittedBy: currentUser.name
+			};
+			await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+			alert(`تم حفظ تحضير ${name}`);
+		}
+
+		async function outVehicle(plate, card) {
+			if(!confirm("هل استلم العميل السيارة؟")) return;
+			await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateVehicleStatus', plateNum: plate, cardNum: card }) });
+			loadReports();
+		}
+
+		function captureAndDownload(data) {
+			const cap = document.getElementById('receipt-capture');
+			document.getElementById('cap-data').innerHTML = `
+				<div class="flex justify-between"><span>اللوحة:</span><b>${data.plateNum}</b></div>
+				<div class="flex justify-between"><span>الكرت:</span><b>#${data.cardNum}</b></div>
+				<div class="flex justify-between"><span>الخدمة:</span><b>${data.serviceType === 'Free' ? 'مجانية' : 'مدفوعة'}</b></div>
+				<div class="flex justify-between text-lg"><span>التاريخ:</span><b>${new Date().toLocaleDateString('ar-SA')}</b></div>
+			`;
+			html2canvas(cap).then(canvas => {
+				const link = document.createElement('a');
+				link.download = `MB-${data.plateNum}.png`;
+				link.href = canvas.toDataURL();
+				link.click();
+			});
+		}
+
+		function rePrint(data) {
+			captureAndDownload({ plateNum: data.plateNum, cardNum: data.cardNum, serviceType: data.status });
 		}
 
 		function navTo(id) {
 			document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
 			document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
 			document.getElementById(id).classList.add('active');
-			document.getElementById('nav-' + (id==='employees'?'employees':id)).classList.add('nav-active');
-			if(id === 'employees') renderCalendar();
+			document.getElementById('nav-'+id).classList.add('nav-active');
 			if(id === 'reports') loadReports();
-		}
-
-		function logicValet() {
-			const amt = parseFloat(document.getElementById('invAmount').value) || 0;
-			const payArea = document.getElementById('payment-area');
-			const freeB = document.getElementById('free-badge');
-			if(amt > 0 && amt < 25) { payArea.classList.remove('hidden'); freeB.classList.add('hidden'); }
-			else if(amt >= 25) { payArea.classList.add('hidden'); freeB.classList.remove('hidden'); }
-			else { payArea.classList.add('hidden'); freeB.classList.add('hidden'); }
-		}
-
-		async function saveInvoice() {
-			const amt = parseFloat(document.getElementById('invAmount').value);
-			const inv = document.getElementById('invNum').value;
-			const card = document.getElementById('cardNum').value;
-			if(!inv || isNaN(amt) || !card) return alert("Missing Info");
-			try {
-				await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-					action: 'saveInvoice', invoiceNumber: inv, amount: amt, 
-					serviceType: amt >= 25 ? 'Free' : 'Paid', fee: amt >= 25 ? 0 : 25, 
-					cardNum: card, valetName: currentUser.name
-				})});
-				alert("Saved!");
-				document.querySelectorAll('input').forEach(i => i.value = '');
-				logicValet();
-			} catch(e) { alert("Error"); }
-		}
-
-		async function loadReports() {
-			const feed = document.getElementById('invoice-feed');
-			feed.innerHTML = "Loading...";
-			try {
-				const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getReports' }) });
-				allReports = await res.json();
-				renderReports(allReports);
-			} catch(e) {}
-		}
-
-		function renderReports(data) {
-			const feed = document.getElementById('invoice-feed');
-			let rev = 0; feed.innerHTML = "";
-			data.forEach(item => {
-				rev += parseFloat(item.fee || 0);
-				feed.innerHTML += `<div class="glass p-5 flex justify-between items-center"><div><p class="font-black">#${item.invNum}</p><p class="text-[10px] opacity-40">${item.valet}</p></div><div class="text-left font-black">${item.fee} SAR</div></div>`;
-			});
-			if(document.getElementById('total-revenue')) {
-				document.getElementById('total-revenue').innerText = rev.toFixed(2);
-				document.getElementById('total-services').innerText = data.length;
-			}
-		}
-
-		function renderCalendar() {
-			const grid = document.getElementById('calendar-grid'); grid.innerHTML = "";
-			const days = new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
-			for(let d=1; d<=days; d++) {
-				grid.innerHTML += `<div onclick="openModal('${d}')" class="calendar-day bg-white/40 shadow-sm">${d}</div>`;
-			}
-		}
-
-		function openModal(d) {
-			selectedDate = d;
-			document.getElementById('modal-date-label').innerText = "Day " + d;
-			document.getElementById('attendance-modal').classList.remove('hidden');
-			loadEmpOptions();
-		}
-
-		function closeModal() { document.getElementById('attendance-modal').classList.add('hidden'); }
-
-		async function loadEmpOptions() {
-	const sel = document.getElementById('emp-select');
-	sel.innerHTML = '<option>Loading Employees...</option>'; // رسالة مؤقتة
-	try {
-		const res = await fetch(API_URL, { 
-			method: 'POST', 
-			body: JSON.stringify({ action: 'getEmployees' }) 
-		});
-		const emps = await res.json();
-		sel.innerHTML = ''; // مسح الرسالة المؤقتة
-		emps.forEach(e => {
-			let opt = document.createElement('option');
-			opt.value = e;
-			opt.innerText = e;
-			sel.appendChild(opt);
-		});
-	} catch(e) {
-		sel.innerHTML = '<option>Error loading names</option>';
-	}
-}
-
-		async function submitAttendanceData() {
-			const emp = document.getElementById('emp-select').value;
-			const stat = document.getElementById('att-status').value;
-			try {
-				await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-					action: 'submitAttendance', employeeName: emp, status: stat, date: selectedDate, submittedBy: currentUser.name
-				})});
-				alert("Done"); closeModal();
-			} catch(e) { alert("Error"); }
+			if(id === 'attendance') loadAttendanceSystem();
 		}
 
 		lucide.createIcons();
