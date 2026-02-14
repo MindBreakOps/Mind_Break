@@ -205,7 +205,7 @@ async function captureAndDownload(data) {
     `;
     
     document.getElementById('cap-staff-name').innerText = currentUser.name;
-    document.getElementById('cap-time').innerText = new Date().toLocaleString('ar-SA');
+    document.getElementById('cap-time').innerText = new Date().toLocaleString('en-US');
 
     // عملية التحويل لصورة
     const canvas = await html2canvas(cap, { scale: 2 });
