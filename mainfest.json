@@ -1,0 +1,21 @@
+{
+  "name": "Mind Break Operations System",
+  "short_name": "MBO System",
+  "description": "Integrated Management System for Mind Break",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#F8F5EE",
+  "theme_color": "#632323",
+  "icons": [
+	{
+	  "src": "mind.png",
+	  "sizes": "192x192",
+	  "type": "image/png"
+	},
+	{
+	  "src": "mind.png",
+	  "sizes": "512x512",
+	  "type": "image/png"
+	}
+  ]
+}

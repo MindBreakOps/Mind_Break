@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+body { 
+	font-family: 'Tajawal', sans-serif; 
+	background-color: #F8F5EE; 
+	color: #331111; 
+	overflow-x: hidden; 
+}
+
+.glass { 
+	background: rgba(255, 255, 255, 0.8); 
+	backdrop-filter: blur(15px); 
+	border: 1px solid white; 
+	border-radius: 2rem; 
+}
+
+.page-content { 
+	display: none; 
+	padding-bottom: 120px; 
+}
+
+.active { 
+	display: block; 
+	animation: slideUp 0.3s ease-out; 
+}
+
+@keyframes slideUp { 
+	from { transform: translateY(20px); opacity: 0; } 
+	to { transform: translateY(0); opacity: 1; } 
+}
+
+.nav-active { 
+	background: #632323 !important; 
+	color: white !important; 
+}
+
+.invoice-card { 
+	background: white; 
+	padding: 20px; 
+	border-radius: 1.5rem; 
+	border: 1px solid #eee; 
+	margin-bottom: 15px; 
+}
+
+input, select { 
+	outline: none !important; 
+	border: 1px solid #f0f0f0 !important; 
+	width: 100%; 
+	padding: 1.2rem; 
+	border-radius: 1.2rem; 
+	background: white; 
+	font-weight: bold; 
+	font-size: 1rem; 
+}
+
+input:focus { 
+	border-color: #632323 !important; 
+	box-shadow: 0 0 0 3px rgba(99, 35, 35, 0.05); 
+}
+
+.badge-free { 
+	background: #E8F5E9; 
+	color: #2E7D32; 
+	padding: 4px 12px; 
+	border-radius: 8px; 
+	font-size: 10px; 
+	font-weight: 900; 
+}
