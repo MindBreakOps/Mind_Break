@@ -60,7 +60,7 @@ function switchTab(mode) {
 		document.getElementById('tab-mb').className = "flex-1 py-3 rounded-2xl font-bold bg-white text-[#632323] border border-[#eee]";
 		container.innerHTML = `
 			<input type="text" id="clientName" placeholder="اسم العميل الخارجي">
-			<input type="number" id="clientPhone" placeholder="رقم الجوال (اختياري)">
+			<input type="number" id="clientPhone" placeholder="رقم الجوال ">
 			<input type="text" id="plateNum" placeholder="رقم اللوحة" class="text-center text-xl">
 			<input type="number" id="cardNum" placeholder="رقم الكرت" class="text-center text-xl">
 		`;
