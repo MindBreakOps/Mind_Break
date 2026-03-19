@@ -921,7 +921,7 @@ textarea.field{resize:none;line-height:1.6;}
     <div style="font-size:9px;color:#8c877e;font-weight:700;letter-spacing:.18em;text-transform:uppercase;">Valet Service Receipt</div>
     <div style="display:flex;align-items:center;gap:6px;">
       <span style="font-size:9px;color:#8c877e;font-weight:600;letter-spacing:.1em;">REF</span>
-      <span id="cap-ref" style="font-family:'Fira Code',monospace;font-size:12px;font-weight:700;color:#9a7230;letter-spacing:.06em;"></span>
+      <span id="cap-ref" style="font-family:Fira Code,monospace;font-size:12px;font-weight:700;color:#9a7230;letter-spacing:.06em;"></span>
     </div>
   </div>
 
@@ -1084,7 +1084,7 @@ textarea.field{resize:none;line-height:1.6;}
 // CONFIG
 // ═══════════════════════════════
 const OPS_API  = 'https://script.google.com/macros/s/AKfycbzgdCDgdJ4rXvoZn1zQWIlH44v0kAaQYbEiGJVcrDJ5-jG5CFYUaIuMWaRWASJzkyEV/exec';
-const HR_API   = 'https://script.google.com/macros/s/AKfycbz34WWbbswac1O6vJaae-rNsRqQZLtObz6e3eFEmx5x3iij9GCz0Hp7fV6wONe-BMAx/exec';
+const HR_API   = 'https://script.google.com/macros/s/AKfycbyhdYONRe6o_9OqRvlIaxTSGxLL6NZcT4ehQIC4pnKHgHMqKQFU9sUIjYiMRliuRJTy/exec';
 const ANPR_API = 'https://script.google.com/macros/s/AKfycbwZC7gHUWdIrHp47L_muA2eYFkX2OR3TG1kKh9s9My1HE_MwvdYe1FKEwDulYx1TEyW9w/exec';
 const ACC_API  = 'https://script.google.com/macros/s/AKfycbzVCr1tsIoTLdNRQr26i2gnOT7XnU6QlQwtu9DnuoSMD-_OucnIstBmReJGNc_xhXCGAA/exec';
 // ▼▼▼ PASTE YOUR EMPLOYEE INFO GAS URL HERE ▼▼▼
@@ -1260,23 +1260,20 @@ async function handleSignUp(){
       name,
       email,
       pass,
-      role:  'Staff',
-      job:   job || 'Staff',
+      role:  'Pending',
+      job:   job || '',
       phone: phone || '',
       photo: ''
     });
 
     if(d && d.success){
-      // Auto login after signup
-      alert('Account created! Welcome to OPERIX, ' + name.split(' ')[0] + '.');
-      currentUser = {
-        _ops:  { name, role:'Staff', phone, photo:'' },
-        _hr:   { name, role:'Staff', phone, photo:'' },
-        _anpr: { name, role:'Staff', phone, photo:'' },
-        name, role:'Staff', phone, photo:'', email, pass
-      };
       document.getElementById('signup-page').classList.add('hidden');
-      showWorkspaceSelector();
+      document.getElementById('login-page').classList.remove('hidden');
+      // Clear signup fields
+      ['su-name','su-email','su-phone','su-job','su-pass','su-pass2'].forEach(id=>{
+        const el = document.getElementById(id); if(el) el.value = '';
+      });
+      alert('Account request submitted!\n\nYour account is pending admin approval. You will be able to sign in once an admin activates your account.');
     } else {
       errEl.innerText = d?.error || 'Registration failed. Please try again.';
     }
@@ -1309,6 +1306,12 @@ async function handleLogin(){
     });
     const d = await res.json();
     if(d && d.status === 'success'){
+      if((d.role||'').toLowerCase() === 'pending'){
+        btn.disabled = false;
+        btn.innerText = 'Sign In';
+        alert('Your account is pending admin approval.\nPlease contact your administrator to activate your account.');
+        return;
+      }
       verified = true;
       userData = {
         name:  d.name  || email.split('@')[0],
@@ -2456,38 +2459,44 @@ async function loadMyAttendance(){
   if(!el) return;
   el.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px;">Loading…</div>';
   try{
-    const res  = await fetch(HR_API, {method:'POST', body:JSON.stringify({action:'get_requests'})});
+    // Fetch from Emp-atten sheet via HR GAS
+    const res  = await fetch(HR_API, {method:'POST', body:JSON.stringify({action:'get_attendance'})});
     const data = await res.json();
-    const name  = (currentUser.name||'').toLowerCase();
-    const month = (document.getElementById('hr-att-month')||{}).value || '';
-    const mine  = (data||[]).filter(r => (r.name||'').toLowerCase() === name);
+    const name = (currentUser.name||'').toLowerCase();
+    const rows = Array.isArray(data) ? data : (data.data || data.records || []);
+    const mine = rows.filter(r => (r.name||r[1]||'').toString().toLowerCase() === name);
     if(!mine.length){
-      el.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px;">No attendance records found</div>';
+      el.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px;">No attendance records found in Emp-atten</div>';
       return;
     }
     el.innerHTML = '';
-    mine.reverse().forEach(r => {
+    mine.slice().reverse().forEach(r => {
+      const type    = r.type || r[2] || '';
+      const date    = r.date || r[0] || '';
+      const time    = r.time || r[5] || '';
+      const loc     = r.location || r[3] || '';
+      const dist    = r.distance || r[4] || '';
+      const isIn    = type === 'حضور' || type.toLowerCase().includes('in');
       const div = document.createElement('div');
-      div.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--r2);padding:12px;';
-      const isIn = r.type === 'حضور';
+      div.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--r2);padding:12px;margin-bottom:7px;';
       div.innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:center;">' +
           '<div style="display:flex;align-items:center;gap:9px;">' +
-            '<div style="width:8px;height:8px;border-radius:50%;background:' + (isIn?'var(--green)':'var(--red)') + ';"></div>' +
+            '<div style="width:9px;height:9px;border-radius:50%;background:' + (isIn?'var(--green)':'var(--red)') + ';flex-shrink:0;"></div>' +
             '<div>' +
-              '<div style="font-size:13px;font-weight:700;color:var(--text);">' + (isIn ? 'Check In' : 'Check Out') + '</div>' +
-              '<div style="font-size:10px;color:var(--text3);margin-top:1px;">' + (r.type||'') + '</div>' +
+              '<div style="font-size:13px;font-weight:700;color:var(--text);">' + (isIn?'Check In':'Check Out') + '</div>' +
+              '<div style="font-size:10px;color:var(--text3);margin-top:1px;">' + (loc||type) + '</div>' +
             '</div>' +
           '</div>' +
           '<div style="text-align:right;">' +
-            '<div style="font-size:11px;font-weight:600;color:var(--text);">' + (r.details||'—') + '</div>' +
-            '<div style="font-size:9px;color:var(--text4);margin-top:2px;">' + (r.status||'') + '</div>' +
+            '<div style="font-family:Fira Code,monospace;font-size:12px;font-weight:600;color:var(--text);">' + (time||'—') + '</div>' +
+            '<div style="font-size:9px;color:var(--text4);margin-top:1px;">' + (typeof date === 'object' ? new Date(date).toLocaleDateString('en-GB') : date) + '</div>' +
           '</div>' +
         '</div>';
       el.appendChild(div);
     });
   } catch(e){
-    el.innerHTML = '<div style="color:var(--red);font-size:12px;text-align:center;padding:16px;">Failed to load</div>';
+    el.innerHTML = '<div style="color:var(--red);font-size:12px;text-align:center;padding:16px;">Error: ' + e.message + '</div>';
   }
 }
 
@@ -2593,14 +2602,19 @@ async function loadProfileFromEmp(name){
   try{
     const d = await gasCall(EMP_API, {action:'getEmployees'});
     if(d && d.success && d.data){
-      const emp = d.data.find(e => (e.name||'').toLowerCase() === name.toLowerCase());
+      // Match by name OR Full Name column (GAS returns both camelCase and original)
+      const emp = d.data.find(e =>
+        (e.name||e['Full Name']||'').toLowerCase() === name.toLowerCase() ||
+        (e['Full Name']||'').toLowerCase().includes(name.toLowerCase().split(' ')[0])
+      );
       if(emp){
         const empFields = [
-          ['Department',     emp.department     || '—'],
-          ['Contract',       emp.contractType   || '—'],
-          ['Joined',         emp.registeredDate || '—'],
-          ['Nationality',    emp.nationality    || '—'],
-          ['National ID',    emp.idNumber       || '—'],
+          ['Department',  emp.department  || emp['Department']  || '—'],
+          ['Contract',    emp.contractType|| emp['Contract Type']|| '—'],
+          ['Joined',      emp.registeredDate || emp['Registered Date'] || '—'],
+          ['Nationality', emp.nationality  || emp['Nationality'] || '—'],
+          ['National ID', emp.idNumber    || emp['ID / National No.'] || '—'],
+          ['Phone',       emp.phone       || emp['Phone']       || '—'],
         ];
         ef.innerHTML = '';
         empFields.forEach(row => {
